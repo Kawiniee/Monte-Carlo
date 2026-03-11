@@ -1,74 +1,269 @@
-body {
+/* ==========================================================================
+   Premium Quant Dashboard Styles
+   ========================================================================== */
 
-    background: #081c34;
-    color: white;
-    font-family: Arial;
+/* --- Variables & Theme --- */
+:root {
+    --bg-base: #0a0e17;
+    /* Very deep blue/black */
+    --bg-panel: rgba(18, 28, 45, 0.4);
+    --border-glass: rgba(255, 255, 255, 0.08);
+
+    --text-main: #f1f5f9;
+    --text-muted: #94a3b8;
+
+    --accent-blue: #00f2fe;
+    --accent-purple: #4facfe;
+    --accent-red: #ff4b4b;
+    --accent-orange: #ff9a44;
+
+    --radius-lg: 16px;
+    --radius-md: 10px;
+    --radius-sm: 6px;
+
+    --shadow-soft: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    --transition-fast: all 0.2s ease;
+}
+
+/* --- Base --- */
+body {
+    background-color: var(--bg-base);
+    background-image:
+        radial-gradient(circle at 15% 50%, rgba(79, 172, 254, 0.05), transparent 25%),
+        radial-gradient(circle at 85% 30%, rgba(0, 242, 254, 0.05), transparent 25%);
+    color: var(--text-main);
+    font-family: 'Outfit', sans-serif;
     margin: 0;
     padding: 0;
-
+    min-height: 100vh;
+    overflow-x: hidden;
 }
 
-h1 {
+* {
+    box-sizing: border-box;
+}
 
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-base);
+}
+
+::-webkit-scrollbar-thumb {
+    background: #1e293b;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #334155;
+}
+
+/* --- Header --- */
+.app-header {
     text-align: center;
-    margin: 20px;
-
+    padding: 2rem 1rem 1rem;
 }
 
+.app-header h1 {
+    margin: 0;
+    font-size: 2.2rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    background: linear-gradient(to right, var(--text-main), var(--accent-blue));
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+    margin: 0.5rem 0 0;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    font-weight: 300;
+}
+
+/* --- Layout --- */
 .container {
-
     display: flex;
-    height: 90vh;
-
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 1rem 2rem 3rem;
+    gap: 2rem;
+    align-items: flex-start;
 }
 
-/* LEFT PANEL- */
+/* --- Glassmorphism Panels --- */
+.glass-panel {
+    background: var(--bg-panel);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-soft);
+}
 
-.left {
-
-    width: 300px;
-    padding: 20px;
-    background: #0c2345;
-
+/* --- Sidebar (Left Panel) --- */
+.sidebar {
+    width: 320px;
+    flex-shrink: 0;
+    padding: 1.5rem;
     display: flex;
     flex-direction: column;
-    gap: 8px;
-
+    gap: 2rem;
+    position: sticky;
+    top: 2rem;
 }
 
-.left input {
-
-    padding: 6px;
-    font-size: 14px;
-
+.sidebar h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-top: 0;
+    margin-bottom: 1.25rem;
+    color: var(--text-main);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 1px solid var(--border-glass);
+    padding-bottom: 0.5rem;
 }
 
-.left button {
+/* Inputs */
+.input-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
 
-    margin-top: 10px;
-    padding: 10px;
-    background: #3db7ff;
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    width: 100%;
+}
+
+.input-group-row {
+    display: flex;
+    gap: 1rem;
+}
+
+label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 400;
+}
+
+input[type="number"] {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border-glass);
+    color: var(--text-main);
+    padding: 0.6rem 0.8rem;
+    border-radius: var(--radius-sm);
+    font-family: inherit;
+    font-size: 0.95rem;
+    outline: none;
+    transition: var(--transition-fast);
+}
+
+input[type="number"]:focus {
+    border-color: var(--accent-purple);
+    background: rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 0 2px rgba(79, 172, 254, 0.15);
+}
+
+/* Button */
+.btn-glow {
+    margin-top: 0.5rem;
+    background: linear-gradient(135deg, var(--accent-purple) 0%, var(--accent-blue) 100%);
+    color: #fff;
     border: none;
+    padding: 0.85rem 1rem;
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    font-weight: 600;
     cursor: pointer;
-
+    transition: var(--transition-fast);
+    font-family: inherit;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-/* RIGHT PANEL- */
+.btn-glow:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(79, 172, 254, 0.4);
+}
 
-.right {
+.btn-glow:active {
+    transform: translateY(0);
+}
 
-    flex: 1;
-    padding: 20px;
-
+/* Results Cards */
+.results-section {
     display: flex;
     flex-direction: column;
-    gap: 40px;
-
+    gap: 0.85rem;
 }
 
-canvas {
+.result-card {
+    background: rgba(0, 0, 0, 0.15);
+    border: 1px solid var(--border-glass);
+    padding: 1rem;
+    border-radius: var(--radius-md);
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
 
-    width: 100% !important;
-    height: 400px !important;
+.result-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
 
+.result-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.accent-red {
+    color: var(--accent-red);
+}
+
+.accent-orange {
+    color: var(--accent-orange);
+}
+
+/* --- Main Content (Right Panel) --- */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    min-width: 0;
+    /* Prevents flexbox overflow issues */
+}
+
+.chart-container {
+    padding: 1.5rem;
+    height: 400px;
+    /* Fixed height for consistent layout */
+    position: relative;
+    width: 100%;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+    .container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        position: static;
+    }
 }

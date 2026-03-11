@@ -6,6 +6,11 @@
 let equityChart = null
 let histChart = null
 
+// --- Chart Theme Settings ---
+Chart.defaults.color = "rgba(241, 245, 249, 0.7)"; // text-muted
+Chart.defaults.font.family = "'Outfit', sans-serif";
+const gridColor = "rgba(255, 255, 255, 0.05)";
+
 // ================================
 // Run Monte Carlo Simulation
 // ================================
@@ -41,6 +46,10 @@ function runSimulation() {
         let worstLosing = 0
 
         let curve = []
+
+        // Generate a random hue for each simulation line to create a cool effect
+        let hue = Math.floor(Math.random() * 60) + 190; // Range ~190-250 (Blues/Purples)
+        let lineColor = `hsla(${hue}, 100%, 65%, 0.15)`;
 
         for (let t = 0; t < trades; t++) {
 
@@ -78,8 +87,10 @@ function runSimulation() {
 
         equityDatasets.push({
             data: curve,
-            borderWidth: 1,
-            fill: false
+            borderWidth: 1.5,
+            borderColor: lineColor,
+            fill: false,
+            tension: 0.1 // slight curve
         })
 
         finalBalances.push(equity)
@@ -96,14 +107,16 @@ function runSimulation() {
     let worstDD = Math.max(...drawdowns)
     let worstStreak = Math.max(...losingStreaks)
 
-    document.getElementById("avgBalance").innerText =
-        "Average Final Balance: " + avgBalance.toFixed(2)
+    // Format currency
+    const formatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        maximumFractionDigits: 0
+    });
 
-    document.getElementById("maxDD").innerText =
-        "Worst Drawdown: " + (worstDD * 100).toFixed(2) + "%"
-
-    document.getElementById("worstStreak").innerText =
-        "Worst Losing Streak: " + worstStreak
+    document.getElementById("avgBalance").innerText = formatter.format(avgBalance)
+    document.getElementById("maxDD").innerText = (worstDD * 100).toFixed(2) + "%"
+    document.getElementById("worstStreak").innerText = worstStreak
 
     // ================================
     // Draw Charts
@@ -149,13 +162,17 @@ function drawEquityChart(datasets, trades) {
         options: {
 
             responsive: true,
+            maintainAspectRatio: false,
 
             plugins: {
                 legend: { display: false },
                 title: {
                     display: true,
-                    text: "Monte Carlo Equity Curves"
-                }
+                    text: "Monte Carlo Equity Curves",
+                    font: { size: 16, weight: '600' },
+                    padding: { bottom: 20 }
+                },
+                tooltip: { enabled: false } // Disable tooltips for performance on 200 lines
             },
 
             elements: {
@@ -165,6 +182,7 @@ function drawEquityChart(datasets, trades) {
             scales: {
 
                 x: {
+                    grid: { color: gridColor },
                     title: {
                         display: true,
                         text: "Trade Number"
@@ -172,9 +190,15 @@ function drawEquityChart(datasets, trades) {
                 },
 
                 y: {
+                    grid: { color: gridColor },
                     title: {
                         display: true,
-                        text: "Account Balance"
+                        text: "Account Balance ($)"
+                    },
+                    ticks: {
+                        callback: function (value) {
+                            return "$" + value.toLocaleString();
+                        }
                     }
                 }
 
@@ -186,9 +210,9 @@ function drawEquityChart(datasets, trades) {
 
 }
 
-// =================================
+// ================================
 // Histogram Chart
-// =================================
+// ================================
 
 function drawHistogram(data) {
 
@@ -203,9 +227,25 @@ function drawHistogram(data) {
     let min = Math.min(...data)
     let max = Math.max(...data)
 
+    // Handle case where min == max (e.g. 0 trades or 0 risk)
+    if (min === max) {
+        max = min + 1;
+    }
+
     let step = (max - min) / bins
 
     let hist = new Array(bins).fill(0)
+    let labels = new Array(bins)
+
+    // Create labels based on ranges
+    for (let i = 0; i < bins; i++) {
+        let rangeStart = min + (i * step);
+        let rangeEnd = min + ((i + 1) * step);
+
+        // Format to compact numbers like $10k
+        let formatNum = (num) => "$" + (num > 1000 ? (num / 1000).toFixed(1) + "k" : Math.floor(num));
+        labels[i] = `${formatNum(rangeStart)} - ${formatNum(rangeEnd)}`;
+    }
 
     for (let v of data) {
 
@@ -219,43 +259,71 @@ function drawHistogram(data) {
 
     }
 
+    // Gradient for bars
+    let gradient = ctx.getContext('2d').createLinearGradient(0, 0, 0, 400);
+    gradient.addColorStop(0, '#00f2fe');   // accent-blue
+    gradient.addColorStop(1, '#4facfe');   // accent-purple
+
     histChart = new Chart(ctx, {
 
         type: "bar",
 
         data: {
 
-            labels: hist.map((_, i) => "Bin " + (i + 1)),
+            labels: labels,
 
             datasets: [{
-                label: "Frequency",
-                data: hist
+                label: "Simulations",
+                data: hist,
+                backgroundColor: gradient,
+                borderRadius: 4,
+                borderSkipped: false
             }]
 
         },
 
         options: {
 
+            responsive: true,
+            maintainAspectRatio: false,
+
             plugins: {
+                legend: { display: false },
                 title: {
                     display: true,
-                    text: "Final Balance Distribution"
+                    text: "Final Balance Distribution",
+                    font: { size: 16, weight: '600' },
+                    padding: { bottom: 20 }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(10, 14, 23, 0.9)',
+                    titleColor: '#fff',
+                    bodyColor: '#fff',
+                    borderColor: 'rgba(255,255,255,0.1)',
+                    borderWidth: 1
                 }
             },
 
             scales: {
 
                 x: {
+                    grid: { display: false },
                     title: {
                         display: true,
-                        text: "Balance Range"
+                        text: "Final Balance Range"
+                    },
+                    ticks: {
+                        maxRotation: 45,
+                        minRotation: 45,
+                        font: { size: 10 }
                     }
                 },
 
                 y: {
+                    grid: { color: gridColor },
                     title: {
                         display: true,
-                        text: "Frequency"
+                        text: "Frequency (Count)"
                     }
                 }
 
@@ -266,4 +334,3 @@ function drawHistogram(data) {
     })
 
 }
-

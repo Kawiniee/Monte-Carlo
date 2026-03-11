@@ -1,69 +1,107 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quant Monte Carlo Simulator</title>
 
+    <!-- Google Fonts for Modern Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="montecarlo.js"></script>
+    <script src="montecarlo.js" defer></script>
 
+    <!-- Custom Styles -->
     <link rel="stylesheet" href="style.css">
-
 </head>
 
 <body>
 
-    <h1>Quant Monte Carlo Simulator</h1>
+    <header class="app-header">
+        <h1>Quant Monte Carlo Simulator</h1>
+        <p class="subtitle">System Performance & Risk Analysis</p>
+    </header>
 
     <div class="container">
 
-        <!-- LEFT PANEL -->
+        <!-- LEFT PANEL (Sidebar) -->
+        <aside class="sidebar glass-panel">
+            <section class="input-section">
+                <h2>System Parameters</h2>
 
-        <div class="left">
+                <div class="input-group">
+                    <label for="winrate">Winrate (%)</label>
+                    <input type="number" id="winrate" value="40" step="1" min="0" max="100">
+                </div>
 
-            <h2>System Parameters</h2>
+                <div class="input-group-row">
+                    <div class="input-group">
+                        <label for="reward">Reward (R)</label>
+                        <input type="number" id="reward" value="3" step="0.1">
+                    </div>
+                    <div class="input-group">
+                        <label for="risk">Risk (R)</label>
+                        <input type="number" id="risk" value="1" step="0.1">
+                    </div>
+                </div>
 
-            <label>Winrate (%)</label>
-            <input id="winrate" value="40">
+                <div class="input-group">
+                    <label for="trades">Number of Trades</label>
+                    <input type="number" id="trades" value="100" step="10">
+                </div>
 
-            <label>Reward (R)</label>
-            <input id="reward" value="3">
+                <div class="input-group">
+                    <label for="sims">Simulations</label>
+                    <input type="number" id="sims" value="200" step="10">
+                </div>
 
-            <label>Risk (R)</label>
-            <input id="risk" value="1">
+                <div class="input-group">
+                    <label for="balance">Initial Balance ($)</label>
+                    <input type="number" id="balance" value="10000" step="100">
+                </div>
 
-            <label>Trades</label>
-            <input id="trades" value="100">
+                <div class="input-group">
+                    <label for="riskpct">Risk per Trade (%)</label>
+                    <input type="number" id="riskpct" value="1" step="0.1" min="0" max="100">
+                </div>
 
-            <label>Simulations</label>
-            <input id="sims" value="200">
+                <button onclick="runSimulation()" class="btn-glow">Run Simulation</button>
+            </section>
 
-            <label>Initial Balance</label>
-            <input id="balance" value="10000">
+            <section class="results-section">
+                <h2>Results Overview</h2>
 
-            <label>Risk per Trade (%)</label>
-            <input id="riskpct" value="1">
+                <div class="result-card">
+                    <span class="result-label">Avg. Final Balance</span>
+                    <span class="result-value" id="avgBalance">---</span>
+                </div>
 
-            <button onclick="runSimulation()">Run Monte Carlo</button>
+                <div class="result-card">
+                    <span class="result-label">Worst Drawdown</span>
+                    <span class="result-value accent-red" id="maxDD">---</span>
+                </div>
 
-            <h3>Results</h3>
+                <div class="result-card">
+                    <span class="result-label">Worst Losing Streak</span>
+                    <span class="result-value accent-orange" id="worstStreak">---</span>
+                </div>
+            </section>
+        </aside>
 
-            <p id="avgBalance"></p>
-            <p id="maxDD"></p>
-            <p id="worstStreak"></p>
+        <!-- RIGHT PANEL (Main Content Area) -->
+        <main class="main-content">
+            <div class="chart-container glass-panel">
+                <canvas id="equityChart"></canvas>
+            </div>
 
-        </div>
-
-        <!-- RIGHT PANEL --->
-
-        <div class="right">
-
-            <canvas id="equityChart"></canvas>
-
-            <canvas id="histChart"></canvas>
-
-        </div>
+            <div class="chart-container glass-panel">
+                <canvas id="histChart"></canvas>
+            </div>
+        </main>
 
     </div>
 
