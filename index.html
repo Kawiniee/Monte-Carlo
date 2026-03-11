@@ -3,12 +3,12 @@
 
 <head>
 
-    <meta charset="UTF-8">
     <title>Quant Monte Carlo Simulator</title>
 
-    <link rel="stylesheet" href="style.css">
-
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="montecarlo.js"></script>
+
+    <link rel="stylesheet" href="style.css">
 
 </head>
 
@@ -18,8 +18,9 @@
 
     <div class="container">
 
+        <!-- LEFT PANEL -->
 
-        <div class="left-panel">
+        <div class="left">
 
             <h2>System Parameters</h2>
 
@@ -46,35 +47,25 @@
 
             <button onclick="runSimulation()">Run Monte Carlo</button>
 
-            <div class="stats">
+            <h3>Results</h3>
 
-                <h3>Results</h3>
-
-                <p id="avgBalance"></p>
-                <p id="maxDD"></p>
-                <p id="worstStreak"></p>
-
-            </div>
+            <p id="avgBalance"></p>
+            <p id="maxDD"></p>
+            <p id="worstStreak"></p>
 
         </div>
 
+        <!-- RIGHT PANEL -->
 
+        <div class="right">
 
-        <div class="right-panel">
+            <canvas id="equityChart"></canvas>
 
-            <div class="chart-box">
-                <canvas id="equityChart"></canvas>
-            </div>
-
-            <div class="chart-box">
-                <canvas id="histChart"></canvas>
-            </div>
+            <canvas id="histChart"></canvas>
 
         </div>
 
     </div>
-
-    <script src="montecarlo.js"></script>
 
 </body>
 
