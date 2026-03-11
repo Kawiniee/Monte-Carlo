@@ -186,9 +186,9 @@ function drawEquityChart(datasets, trades) {
 
 }
 
-// ================================
+// =================================
 // Histogram Chart
-// ================================
+// =================================
 
 function drawHistogram(data) {
 
