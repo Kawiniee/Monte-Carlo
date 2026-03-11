@@ -1,0 +1,72 @@
+```html
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="UTF-8">
+    <title>Quant Monte Carlo Simulator</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+
+    <h1>Quant Monte Carlo Simulator</h1>
+
+    <div class="panel">
+
+        <h2>System Parameters</h2>
+
+        <label>Winrate (%)</label>
+        <input id="winrate" value="40">
+
+        <label>Reward (R)</label>
+        <input id="reward" value="3">
+
+        <label>Risk (R)</label>
+        <input id="risk" value="1">
+
+        <label>Trades</label>
+        <input id="trades" value="100">
+
+        <label>Simulations</label>
+        <input id="sims" value="200">
+
+        <label>Initial Balance</label>
+        <input id="balance" value="10000">
+
+        <label>Risk per Trade (%)</label>
+        <input id="riskpct" value="1">
+
+        <button onclick="runSimulation()">Run Monte Carlo</button>
+
+    </div>
+
+    <div class="stats">
+
+        <h2>Results</h2>
+
+        <p id="avgBalance"></p>
+        <p id="maxDD"></p>
+        <p id="worstStreak"></p>
+
+    </div>
+
+    <div class="charts">
+
+        <canvas id="equityChart"></canvas>
+
+        <canvas id="histChart"></canvas>
+
+    </div>
+
+    <script src="montecarlo.js"></script>
+
+</body>
+
+</html>
+```
