@@ -1,12 +1,25 @@
+
+// ================================
+// Global chart variables
+// ================================
+
+let equityChart = null
+let histChart = null
+
+// ================================
+// Run Monte Carlo Simulation
+// ================================
+
 function runSimulation() {
 
     let winrate = document.getElementById("winrate").value / 100
     let reward = parseFloat(document.getElementById("reward").value)
     let risk = parseFloat(document.getElementById("risk").value)
+
     let trades = parseInt(document.getElementById("trades").value)
     let sims = parseInt(document.getElementById("sims").value)
 
-    let balance = parseFloat(document.getElementById("balance").value)
+    let initialBalance = parseFloat(document.getElementById("balance").value)
     let riskpct = document.getElementById("riskpct").value / 100
 
     let equityDatasets = []
@@ -14,10 +27,14 @@ function runSimulation() {
     let drawdowns = []
     let losingStreaks = []
 
+    // ================================
+    // Monte Carlo loop
+    // ================================
+
     for (let s = 0; s < sims; s++) {
 
-        let equity = balance
-        let peak = balance
+        let equity = initialBalance
+        let peak = initialBalance
         let maxDD = 0
 
         let losing = 0
@@ -60,11 +77,9 @@ function runSimulation() {
         }
 
         equityDatasets.push({
-
             data: curve,
             borderWidth: 1,
             fill: false
-
         })
 
         finalBalances.push(equity)
@@ -72,6 +87,10 @@ function runSimulation() {
         losingStreaks.push(worstLosing)
 
     }
+
+    // ================================
+    // Statistics
+    // ================================
 
     let avgBalance = average(finalBalances)
     let worstDD = Math.max(...drawdowns)
@@ -86,23 +105,36 @@ function runSimulation() {
     document.getElementById("worstStreak").innerText =
         "Worst Losing Streak: " + worstStreak
 
-    drawEquityChart(equityDatasets, trades)
+    // ================================
+    // Draw Charts
+    // ================================
 
+    drawEquityChart(equityDatasets, trades)
     drawHistogram(finalBalances)
 
 }
 
+// ================================
+// Utility Functions
+// ================================
+
 function average(arr) {
-
     return arr.reduce((a, b) => a + b, 0) / arr.length
-
 }
+
+// ================================
+// Equity Curve Chart
+// ================================
 
 function drawEquityChart(datasets, trades) {
 
     const ctx = document.getElementById("equityChart")
 
-    new Chart(ctx, {
+    if (equityChart) {
+        equityChart.destroy()
+    }
+
+    equityChart = new Chart(ctx, {
 
         type: "line",
 
@@ -116,9 +148,37 @@ function drawEquityChart(datasets, trades) {
 
         options: {
 
-            elements: { point: { radius: 0 } },
+            responsive: true,
 
-            plugins: { legend: { display: false } }
+            plugins: {
+                legend: { display: false },
+                title: {
+                    display: true,
+                    text: "Monte Carlo Equity Curves"
+                }
+            },
+
+            elements: {
+                point: { radius: 0 }
+            },
+
+            scales: {
+
+                x: {
+                    title: {
+                        display: true,
+                        text: "Trade Number"
+                    }
+                },
+
+                y: {
+                    title: {
+                        display: true,
+                        text: "Account Balance"
+                    }
+                }
+
+            }
 
         }
 
@@ -126,9 +186,17 @@ function drawEquityChart(datasets, trades) {
 
 }
 
+// ================================
+// Histogram Chart
+// ================================
+
 function drawHistogram(data) {
 
     const ctx = document.getElementById("histChart")
+
+    if (histChart) {
+        histChart.destroy()
+    }
 
     let bins = 20
 
@@ -143,25 +211,55 @@ function drawHistogram(data) {
 
         let index = Math.floor((v - min) / step)
 
-        if (index >= bins) { index = bins - 1 }
+        if (index >= bins) {
+            index = bins - 1
+        }
 
         hist[index]++
 
     }
 
-    new Chart(ctx, {
+    histChart = new Chart(ctx, {
 
         type: "bar",
 
         data: {
 
-            labels: hist.map((_, i) => i),
+            labels: hist.map((_, i) => "Bin " + (i + 1)),
 
             datasets: [{
-
+                label: "Frequency",
                 data: hist
-
             }]
+
+        },
+
+        options: {
+
+            plugins: {
+                title: {
+                    display: true,
+                    text: "Final Balance Distribution"
+                }
+            },
+
+            scales: {
+
+                x: {
+                    title: {
+                        display: true,
+                        text: "Balance Range"
+                    }
+                },
+
+                y: {
+                    title: {
+                        display: true,
+                        text: "Frequency"
+                    }
+                }
+
+            }
 
         }
 
